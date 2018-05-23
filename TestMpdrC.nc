@@ -105,14 +105,7 @@ implementation {
                                         node, radio, channel);
 			}
     }
-		for(i=0; i< numHops; i++){
-      node = hops[i][1];
-      next_hop = hops[i][0];
-      radio = hops[i][2];
-      channel = hops[i][3];
-			
 
-		}
     if (TOS_NODE_ID == sourceNode) {
       call SerialLogger.log(LOG_SOURCE_NODE, sourceNode);
       call TestTimer.startPeriodicAt(TEST_DELAY, TEST_DURATION);
@@ -134,10 +127,7 @@ implementation {
     if (NUM_MSGS > 0 && sendCount >= NUM_MSGS) {
       return;
     }
-    if (startTime == 0) {
-      startTime = call FinishTimer.getNow();
-    }
-    endTime = call FinishTimer.getNow();
+    startTime = call FinishTimer.getNow();
     msg = &msgBuffer;
     payload = (mpdr_test_msg_t*) call MpdrPacket.getPayload(msg,
                                                        sizeof(mpdr_test_msg_t));
@@ -191,7 +181,10 @@ implementation {
     }
 
     endTime = call FinishTimer.getNow();
-
+		if(TOS_NODE_ID == sourceNode){
+			call SerialLogger.log(LOG_TIME_PARCIAL, endTime - startTime);
+		}		
+		//Envia a mensagem de retorno
 		if(TOS_NODE_ID == destinationNode){
 
 			returnmsg = &returnmsgBuffer;
@@ -206,12 +199,7 @@ implementation {
     	  sendCount++;
     	}
 		}
-		else if(TOS_NODE_ID == sourceNode){
-			if (startTime == 0) {
-    		startTime = call FinishTimer.getNow();
-		  }
-	   	endTime = call FinishTimer.getNow();
-		}
+		
     return msg;
   }
 
